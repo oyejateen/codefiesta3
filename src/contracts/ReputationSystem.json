@@ -1,0 +1,19 @@
+{
+    "abi": [
+      {
+        "inputs": [],
+        "name": "getWorkers",
+        "outputs": [{"internalType": "address[]", "name": "", "type": "address[]"}],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{"internalType": "string", "name": "_name", "type": "string"}, {"internalType": "string[]", "name": "_skills", "type": "string[]"}],
+        "name": "registerWorker",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    ],
+    "bytecode": "0x60806040..."
+  }
