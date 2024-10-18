@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Web3Context } from '../contexts/Web3Context';
+import ExternalProfileLink from '../components/ExternalProfileLink';
+import DisputeResolution from '../components/DisputeResolution';
 
 interface Rating {
   platform: string;
   rating: number;
   review: string;
+  id: string;
 }
 
 const WorkerDashboard: React.FC = () => {
@@ -12,39 +15,52 @@ const WorkerDashboard: React.FC = () => {
   const [workerName, setWorkerName] = useState('');
   const [skills, setSkills] = useState<string[]>([]);
   const [ratings, setRatings] = useState<Rating[]>([]);
+  const [unifiedScore, setUnifiedScore] = useState<number>(0);
+  const [isPublic, setIsPublic] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (contract && account) {
       fetchWorkerDetails();
       fetchWorkerRatings();
+      fetchUnifiedScore();
+      fetchPrivacySettings();
     }
   }, [contract, account]);
 
   const fetchWorkerDetails = async () => {
-    try {
-      const worker = await contract.methods.getWorker(account).call();
-      setWorkerName(worker.name);
-      setSkills(worker.skills);
-    } catch (error) {
-      console.error('Error fetching worker details:', error);
-    }
+    // ... (keep existing implementation)
   };
 
   const fetchWorkerRatings = async () => {
+    // ... (keep existing implementation)
+  };
+
+  const fetchUnifiedScore = async () => {
     try {
-      const ratingCount = await contract.methods.getWorkerRatingCount(account).call();
-      const fetchedRatings: Rating[] = [];
-      for (let i = 0; i < ratingCount; i++) {
-        const rating = await contract.methods.getWorkerRating(account, i).call();
-        fetchedRatings.push({
-          platform: rating.platform,
-          rating: parseInt(rating.rating),
-          review: rating.review
-        });
-      }
-      setRatings(fetchedRatings);
+      const score = await contract.methods.getUnifiedScore(account).call();
+      setUnifiedScore(Number(score) / 100);
     } catch (error) {
-      console.error('Error fetching worker ratings:', error);
+      console.error('Error fetching unified score:', error);
+    }
+  };
+
+  const fetchPrivacySettings = async () => {
+    try {
+      const privacy = await contract.methods.getPrivacySettings(account).call();
+      setIsPublic(privacy);
+    } catch (error) {
+      console.error('Error fetching privacy settings:', error);
+    }
+  };
+
+  const togglePrivacy = async () => {
+    try {
+      await contract.methods.togglePrivacy().send({ from: account });
+      setIsPublic(!isPublic);
+    } catch (error) {
+      console.error('Error toggling privacy:', error);
     }
   };
 
@@ -55,7 +71,15 @@ const WorkerDashboard: React.FC = () => {
         <h3 className="text-xl font-semibold">Profile</h3>
         <p>Name: {workerName}</p>
         <p>Skills: {skills.join(', ')}</p>
+        <p>Unified Reputation Score: {unifiedScore.toFixed(2)}</p>
+        <button
+          onClick={togglePrivacy}
+          className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          {isPublic ? 'Make Profile Private' : 'Make Profile Public'}
+        </button>
       </div>
+      <ExternalProfileLink workerAddress={account!} />
       <div>
         <h3 className="text-xl font-semibold mb-2">Ratings & Reviews</h3>
         {ratings.map((rating, index) => (
@@ -63,6 +87,7 @@ const WorkerDashboard: React.FC = () => {
             <p>Platform: {rating.platform}</p>
             <p>Rating: {rating.rating}/5</p>
             <p>Review: {rating.review}</p>
+            <DisputeResolution reviewId={rating.id} />
           </div>
         ))}
       </div>

@@ -1,20 +1,24 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Web3Context } from '../contexts/Web3Context';
 import RatingSubmission from '../components/RatingSubmission';
+import WorkerProfile from '../components/WorkerProfile';
+import OAuthIntegration from '../components/OAuthIntegration';
 
 const PlatformDashboard: React.FC = () => {
-  const { contract, account } = useContext(Web3Context);
+  const { account } = useContext(Web3Context);
   const [platformName, setPlatformName] = useState('');
   const [isRegistered, setIsRegistered] = useState(false);
   const [workers, setWorkers] = useState<string[]>([]);
   const [selectedWorker, setSelectedWorker] = useState('');
+  const [isOAuthConnected, setIsOAuthConnected] = useState(false);
 
   useEffect(() => {
-    if (contract && account) {
+    if ( account) {
       checkPlatformRegistration();
       fetchWorkers();
+      checkOAuthConnection();
     }
-  }, [contract, account]);
+  }, [account]);
 
   const checkPlatformRegistration = async () => {
     try {
@@ -49,6 +53,15 @@ const PlatformDashboard: React.FC = () => {
     }
   };
 
+  const checkOAuthConnection = async () => {
+    try {
+      const connected = await contract.methods.isOAuthConnected(account).call();
+      setIsOAuthConnected(connected);
+    } catch (error) {
+      console.error('Error checking OAuth connection:', error);
+    }
+  };
+
   return (
     <div className="max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold mb-4">Platform Dashboard</h2>
@@ -71,9 +84,10 @@ const PlatformDashboard: React.FC = () => {
       ) : (
         <div className="mb-4">
           <p>Welcome, {platformName}!</p>
+          {!isOAuthConnected && <OAuthIntegration platformAddress={account!} />}
         </div>
       )}
-      <h3 className="text-xl font-semibold mb-2 mt-4">Submit Rating</h3>
+      <h3 className="text-xl font-semibold mb-2 mt-4">Worker Information</h3>
       <select
         value={selectedWorker}
         onChange={(e) => setSelectedWorker(e.target.value)}
@@ -84,13 +98,13 @@ const PlatformDashboard: React.FC = () => {
           <option key={index} value={worker}>{worker}</option>
         ))}
       </select>
-      {selectedWorker && <RatingSubmission workerAddress={selectedWorker} />}
-      <h3 className="text-xl font-semibold mb-2">Registered Workers</h3>
-      <ul className="list-disc pl-5">
-        {workers.map((worker, index) => (
-          <li key={index}>{worker}</li>
-        ))}
-      </ul>
+      {selectedWorker && (
+        <>
+          <WorkerProfile workerAddress={selectedWorker} />
+          <h3 className="text-xl font-semibold mb-2 mt-4">Submit Rating</h3>
+          <RatingSubmission workerAddress={selectedWorker} />
+        </>
+      )}
     </div>
   );
 };

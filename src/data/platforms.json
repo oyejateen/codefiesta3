@@ -1,0 +1,27 @@
+[
+    {
+      "name": "GitHub",
+      "domain": "github.com",
+      "icon": "🐙"
+    },
+    {
+      "name": "LinkedIn",
+      "domain": "linkedin.com",
+      "icon": "🔗"
+    },
+    {
+      "name": "Twitter",
+      "domain": "twitter.com",
+      "icon": "🐦"
+    },
+    {
+      "name": "Facebook",
+      "domain": "facebook.com",
+      "icon": "👤"
+    },
+    {
+      "name": "Instagram",
+      "domain": "instagram.com",
+      "icon": "📷"
+    }
+  ]

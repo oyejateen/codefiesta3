@@ -1,0 +1,32 @@
+{
+    "professions": [
+      "Software Developer",
+      "Graphic Designer",
+      "Content Writer",
+      "Digital Marketer",
+      "Singer",
+      "Dancer",
+      "Data Analyst",
+      "Project Manager",
+      "Virtual Assistant",
+      "Translator",
+      "Video Editor",
+      "Social Media Manager"
+    ],
+    "skills": [
+      "JavaScript",
+      "React",
+      "Node.js",
+      "Python",
+      "Adobe Photoshop",
+      "Illustrator",
+      "Content Strategy",
+      "SEO",
+      "Data Visualization",
+      "Agile Methodologies",
+      "Customer Service",
+      "Multilingual",
+      "Final Cut Pro",
+      "Social Media Analytics"
+    ]
+  }

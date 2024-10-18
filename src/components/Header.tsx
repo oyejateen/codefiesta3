@@ -6,10 +6,10 @@ const Header: React.FC = () => {
   const { account, connectWallet } = useContext(Web3Context);
 
   return (
-    <header className="bg-blue-600 text-white p-4">
+    <header className="bg-purple-600 text-white p-4">
       <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold">
-          Decentralized Reputation System
+        <Link to="/" className="text-4xl font-bold">
+          DRS
         </Link>
         <nav>
           <ul className="flex space-x-4">

@@ -1,62 +1,80 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import Web3 from 'web3';
-import { AbiItem } from 'web3-utils';
-import ReputationSystemABI from '../contracts/ReputationSystem.json';
 
 interface Web3ContextType {
   web3: Web3 | null;
   account: string | null;
-  contract: any | null;
+  isAuthenticated: boolean;
   connectWallet: () => Promise<void>;
+  disconnectWallet: () => void;
 }
 
 export const Web3Context = createContext<Web3ContextType>({
   web3: null,
   account: null,
-  contract: null,
+  isAuthenticated: false,
   connectWallet: async () => {},
+  disconnectWallet: () => {},
 });
 
-interface Web3ProviderProps {
-  children: ReactNode;
-}
-
-export const Web3Provider: React.FC<Web3ProviderProps> = ({ children }) => {
+export const Web3Provider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [web3, setWeb3] = useState<Web3 | null>(null);
   const [account, setAccount] = useState<string | null>(null);
-  const [contract, setContract] = useState<any | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (window.ethereum) {
+      const web3Instance = new Web3(window.ethereum);
+      setWeb3(web3Instance);
+    }
+  }, []);
 
   const connectWallet = async () => {
     if (typeof window.ethereum !== 'undefined') {
       try {
+        console.log('Requesting account access...');
         await window.ethereum.request({ method: 'eth_requestAccounts' });
+        console.log('Account access granted');
+
+        console.log('Creating Web3 instance...');
         const web3Instance = new Web3(window.ethereum);
-        setWeb3(web3Instance);
 
+        console.log('Getting accounts...');
         const accounts = await web3Instance.eth.getAccounts();
+        console.log('Accounts:', accounts);
+        
+        if (accounts.length === 0) {
+          throw new Error('No accounts found. Please make sure MetaMask is unlocked and connected to the correct network.');
+        }
+        
+        setWeb3(web3Instance);
         setAccount(accounts[0]);
-
-        const networkId = await web3Instance.eth.net.getId();
-        const deployedNetwork = (ReputationSystemABI as any).networks[networkId];
-        const contractInstance = new web3Instance.eth.Contract(
-          ReputationSystemABI.abi as AbiItem[],
-          deployedNetwork && deployedNetwork.address
-        );
-        setContract(contractInstance);
+        setIsAuthenticated(true);
+        
+        console.log('Wallet connected successfully');
       } catch (error) {
-        console.error('Failed to connect to wallet:', error);
+        console.error('Failed to connect to MetaMask:', error);
+        if (error instanceof Error) {
+          alert(`Failed to connect wallet: ${error.message}`);
+        } else {
+          alert('An unknown error occurred while connecting to the wallet');
+        }
+        throw error;
       }
     } else {
       console.error('MetaMask is not installed');
+      alert('MetaMask is not installed. Please install MetaMask and refresh the page.');
+      window.open('https://metamask.io/download.html', '_blank');
     }
   };
 
-  useEffect(() => {
-    connectWallet();
-  }, []);
+  const disconnectWallet = () => {
+    setAccount(null);
+    setIsAuthenticated(false);
+  };
 
   return (
-    <Web3Context.Provider value={{ web3, account, contract, connectWallet }}>
+    <Web3Context.Provider value={{ web3, account, isAuthenticated, connectWallet, disconnectWallet }}>
       {children}
     </Web3Context.Provider>
   );

@@ -6,8 +6,8 @@ const contractAddress = 'YOUR_CONTRACT_ADDRESS';
 export const getReputationContract = async () => {
   if (typeof window.ethereum !== 'undefined') {
     await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
     return new ethers.Contract(contractAddress, ReputationSystemABI.abi, signer);
   }
   throw new Error('Please install MetaMask!');

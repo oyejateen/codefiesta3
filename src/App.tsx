@@ -3,23 +3,26 @@ import { Web3Provider } from './contexts/Web3Context';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
-import WorkerRegistration from './pages/WorkerRegistration';
+import SignUp from './pages/SignUp';
+import Profile from './components/Profile';
 import PlatformDashboard from './pages/PlatformDashboard';
-import WorkerDashboard from './pages/WorkerDashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import GovernanceDashboard from './pages/GovernanceDashboard';
+
 function App() {
   return (
     <Web3Provider>
       <Router>
         <div className="flex flex-col min-h-screen">
           <Header />
-          <main className="flex-grow container mx-auto px-4 py-8">
+          <main className="flex-grow">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/worker-registration" element={<WorkerRegistration />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/profile/:address" element={<Profile />} />
               <Route path="/platform-dashboard" element={<PlatformDashboard />} />
-              <Route path="/worker-dashboard" element={<WorkerDashboard />} />
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
+              <Route path="/governance-dashboard" element={<GovernanceDashboard />} />
             </Routes>
           </main>
           <Footer />
@@ -28,4 +31,5 @@ function App() {
     </Web3Provider>
   );
 }
+
 export default App;
