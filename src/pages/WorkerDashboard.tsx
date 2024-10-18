@@ -12,17 +12,12 @@ interface Rating {
 
 const WorkerDashboard: React.FC = () => {
   const { contract, account } = useContext(Web3Context);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [workerName, setWorkerName] = useState('');
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [skills, setSkills] = useState<string[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [ratings, setRatings] = useState<Rating[]>([]);
   const [unifiedScore, setUnifiedScore] = useState<number>(0);
   const [isPublic, setIsPublic] = useState<boolean>(true);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -35,19 +30,41 @@ const WorkerDashboard: React.FC = () => {
   }, [contract, account]);
 
   const fetchWorkerDetails = async () => {
-    // ... (keep existing implementation)
+    setIsLoading(true);
+    setError(null);
+    try {
+      const worker = await contract.methods.getWorker(account).call();
+      setWorkerName(worker.name);
+      setSkills(worker.skills);
+    } catch (err) {
+      console.error('Error fetching worker details:', err);
+      setError('Failed to fetch worker details');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const fetchWorkerRatings = async () => {
-    // ... (keep existing implementation)
+    setIsLoading(true);
+    setError(null);
+    try {
+      const ratingsList = await contract.methods.getWorkerRatings(account).call();
+      setRatings(ratingsList);
+    } catch (err) {
+      console.error('Error fetching worker ratings:', err);
+      setError('Failed to fetch worker ratings');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const fetchUnifiedScore = async () => {
     try {
       const score = await contract.methods.getUnifiedScore(account).call();
       setUnifiedScore(Number(score) / 100);
-    } catch (error) {
-      console.error('Error fetching unified score:', error);
+    } catch (err) {
+      console.error('Error fetching unified score:', err);
+      setError('Failed to fetch unified score');
     }
   };
 
@@ -55,8 +72,9 @@ const WorkerDashboard: React.FC = () => {
     try {
       const privacy = await contract.methods.getPrivacySettings(account).call();
       setIsPublic(privacy);
-    } catch (error) {
-      console.error('Error fetching privacy settings:', error);
+    } catch (err) {
+      console.error('Error fetching privacy settings:', err);
+      setError('Failed to fetch privacy settings');
     }
   };
 
@@ -64,10 +82,19 @@ const WorkerDashboard: React.FC = () => {
     try {
       await contract.methods.togglePrivacy().send({ from: account });
       setIsPublic(!isPublic);
-    } catch (error) {
-      console.error('Error toggling privacy:', error);
+    } catch (err) {
+      console.error('Error toggling privacy:', err);
+      setError('Failed to toggle privacy settings');
     }
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="max-w-2xl mx-auto">
