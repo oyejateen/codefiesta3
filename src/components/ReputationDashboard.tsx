@@ -4,7 +4,7 @@ import WorkerProfile from './WorkerProfile';
 import RatingSubmission from './RatingSubmission';
 
 const ReputationDashboard: React.FC = () => {
-  const { contract, account } = useContext(Web3Context);
+  const { contract } = useContext(Web3Context);
   const [workers, setWorkers] = useState<string[]>([]);
   const [selectedWorker, setSelectedWorker] = useState<string | null>(null);
 

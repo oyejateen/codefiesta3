@@ -23,6 +23,7 @@ export const Web3Provider: React.FC<{ children: React.ReactNode }> = ({ children
   const [web3, setWeb3] = useState<Web3 | null>(null);
   const [account, setAccount] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [contract, setContract] = useState<any | null>(null);
 
   useEffect(() => {

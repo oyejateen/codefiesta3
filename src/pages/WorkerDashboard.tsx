@@ -12,12 +12,17 @@ interface Rating {
 
 const WorkerDashboard: React.FC = () => {
   const { contract, account } = useContext(Web3Context);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [workerName, setWorkerName] = useState('');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [skills, setSkills] = useState<string[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [ratings, setRatings] = useState<Rating[]>([]);
   const [unifiedScore, setUnifiedScore] = useState<number>(0);
   const [isPublic, setIsPublic] = useState<boolean>(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
