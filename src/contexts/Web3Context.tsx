@@ -7,6 +7,7 @@ interface Web3ContextType {
   isAuthenticated: boolean;
   connectWallet: () => Promise<void>;
   disconnectWallet: () => void;
+  contract: any | null; // Add this line
 }
 
 export const Web3Context = createContext<Web3ContextType>({
@@ -15,12 +16,14 @@ export const Web3Context = createContext<Web3ContextType>({
   isAuthenticated: false,
   connectWallet: async () => {},
   disconnectWallet: () => {},
+  contract: null, // Add this line
 });
 
 export const Web3Provider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [web3, setWeb3] = useState<Web3 | null>(null);
   const [account, setAccount] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [contract, setContract] = useState<any | null>(null);
 
   useEffect(() => {
     if (window.ethereum) {
@@ -74,7 +77,7 @@ export const Web3Provider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <Web3Context.Provider value={{ web3, account, isAuthenticated, connectWallet, disconnectWallet }}>
+    <Web3Context.Provider value={{ web3, account, isAuthenticated, connectWallet, disconnectWallet, contract }}>
       {children}
     </Web3Context.Provider>
   );

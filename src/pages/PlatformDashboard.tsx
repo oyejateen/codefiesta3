@@ -5,7 +5,7 @@ import WorkerProfile from '../components/WorkerProfile';
 import OAuthIntegration from '../components/OAuthIntegration';
 
 const PlatformDashboard: React.FC = () => {
-  const { account } = useContext(Web3Context);
+  const { contract, account } = useContext(Web3Context);
   const [platformName, setPlatformName] = useState('');
   const [isRegistered, setIsRegistered] = useState(false);
   const [workers, setWorkers] = useState<string[]>([]);
@@ -13,12 +13,12 @@ const PlatformDashboard: React.FC = () => {
   const [isOAuthConnected, setIsOAuthConnected] = useState(false);
 
   useEffect(() => {
-    if ( account) {
+    if (contract && account) {
       checkPlatformRegistration();
       fetchWorkers();
       checkOAuthConnection();
     }
-  }, [account]);
+  }, [contract, account]);
 
   const checkPlatformRegistration = async () => {
     try {
